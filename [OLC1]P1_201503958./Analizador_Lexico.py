@@ -76,6 +76,7 @@ class Analizador_Lexico:
     def StateNumber(self,line,column,text,word):
         global columna, counter
         self.counter += 1
+        columna += 1
         if self.counter < len(text):
             if re.search(r"[0-9]",text[self.counter]):
                 return self.StateNumber(line,column,text,word+text[self.counter])
@@ -84,6 +85,8 @@ class Analizador_Lexico:
             else:
                 return[line,column,'Entero',word]
             #END
+        else:
+            return[line,column,'Entero',word]
         #END
     #END
 
