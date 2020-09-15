@@ -19,27 +19,38 @@ def analizar():
     try:
         ext = extencion[1]
     except:
-        ext = "js"
+        ext = "rmt"
     #END
 
     _valor = entrada.get(1.0,END)
-    cadena = _valor.strip('\n')
-    cad = cadena.split("\n")
-    count = 0
-    ruta = []
-    cadena = ""
-    for a in cad:
-        if a.strip(' ').startswith('//') and count < 2:
-            ruta.append(a)
-            count +=1
-        else:
-            cadena = cadena + a+"\n"
+    if ext != "rmt":
+        cadena = _valor.strip('\n')
+    
+        cad = cadena.split("\n")
+        count = 0
+        ruta = []
+        cadena = ""
+    
+        for a in cad:
+            if a.strip(' ').startswith('//') and count < 2:
+                ruta.append(a)
+                count +=1
+            else:
+                cadena = cadena + a+"\n"
+            #END
         #END
+        s = "pathl" in ruta[0].lower()
+        if s == True:
+            rut = ruta[0].split(":")
+        else:
+            rut = ruta[1].split(":")
+        #END
+
+        #rut = ruta[0].split(":")
+        dir = rut[1].strip(' ')
     #END
-
-    rut = ruta[0].split(":")
-    dir = rut[1].strip(' ')
-
+    else:
+        cadena = _valor
     if ext == "js":
         an = Analizador_Lexico()
         tokens = an.inic(cadena,dir)
@@ -72,7 +83,7 @@ def analizar():
         print("archivo creado")
     elif ext == "rmt":
         rmt = Analizador_calculadora()
-        tokens = rmt.inic(cadena,dir)
+        tokens = rmt.inic(cadena)
         
     else:
         messagebox.showerror("Error", "Tipo de archivo incorrecto")
@@ -103,7 +114,6 @@ def load_file():
                    global extencion
                    archivo = open(fname)
                    texto = archivo.read()
-                   #print(texto)
                    extencion = fname.split(".")
                    print(extencion[1])
                    entrada.insert(INSERT,texto)
@@ -113,6 +123,27 @@ def load_file():
                return
 #END
 
+def new():
+    entrada.delete(1.0,END)
+#END
+
+def save():
+           fname = askopenfilename(filetypes=(("HTML", "*.html"),
+                                              ("CSS", "*.css"),
+                                              ("RMT", "*.rmt"),
+                                              ("Js","*.js") ))
+           if fname:
+               try:
+                   global extencion
+                   archivo = open(fname)
+                   texto = archivo.read()
+                   extencion = fname.split(".")
+                   print(extencion[1])
+                   entrada.insert(INSERT,texto)
+                   archivo.close()
+               except:                    
+                   showerror("Open Source File", "Failed to read file\n'%s'" % fname)
+               return#END
 def close_window (): 
     app.destroy()
 #END
@@ -127,9 +158,9 @@ Vp.grid(column = 0, row = 0,padx =(50,50), pady=(10,10))
 
 filemenu = Menu(menubar)
 filemenu = Menu(menubar)
-filemenu.add_command(label="Nuevo")
+filemenu.add_command(label="Nuevo",command = new)
 filemenu.add_command(label="Abrir",command = load_file)
-filemenu.add_command(label="Guardar")
+filemenu.add_command(label="Guardar", command = save)
 filemenu.add_command(label="Guardar Como",command = analizar)
 filemenu.add_command(label="Ejecutar Analizar",command = analizar)
 filemenu.add_command(label="Salir",command = close_window)

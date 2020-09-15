@@ -13,7 +13,7 @@ class Analizador_calculadora:
 
     signos = {"PARA":'\(',"PARC":'\)',"MAS":'\+',"MENOS":'\-',"MULT":'\*',"DIV":'\/'}
 
-    def inic(self,texto,dir):
+    def inic(self,texto):
         self.columna = 1
         self.fila = 1
         cont = 1
@@ -76,7 +76,7 @@ class Analizador_calculadora:
                 #END
             #END
         #END
-        self.ReporteTabla(dir,cadena)
+        self.ReporteTabla("/home/",cadena)
         return self.listaTokens     
     #END
 

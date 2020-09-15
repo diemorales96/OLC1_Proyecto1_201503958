@@ -4,6 +4,7 @@ class AnalisisSintactico:
     numPreanalisis = 0
     Errores = False
     preanalisis = []
+    
     def parsear(self,l):
         self.listaTokens = l
         self.preanalisis = self.listaTokens[0]
@@ -66,7 +67,7 @@ class AnalisisSintactico:
 
     def match(self,p):
         if not p == self.preanalisis[2]:
-            print("Se esperaba " + self.getTipoError(p))
+            #print("Se esperaba " + self.getTipoError(p))
             self.Errores = True
         #END
         if not self.preanalisis[2] == "ULTIMO":
