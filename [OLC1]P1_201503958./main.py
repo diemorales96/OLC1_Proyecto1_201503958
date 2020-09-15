@@ -19,7 +19,7 @@ def analizar():
     try:
         ext = extencion[1]
     except:
-        ext = "rmt"
+        ext = "js"
     #END
 
     _valor = entrada.get(1.0,END)

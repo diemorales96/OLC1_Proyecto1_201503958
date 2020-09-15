@@ -1,9 +1,22 @@
+from consArbol import consArbol
+from tranTabla import tranTabla
+import json
+import sigTabla
+
 import re
 import os
 class Analizador_Lexico:
     linea = 0
     columna = 0
     counter = 0
+    identificador = False
+    numero = False
+    sig = False
+
+    expresionId = "..L*|L|D|__#"
+    expresionDigito = "..D.*D?.P.D*D#"
+    expresionSimbolo = ".S#"
+    
           
     reservadas = {'var','this','class','math','true','false','PATHL','int','string','char','bollean','type','if','for','while','do','continue','break','return'}
     signos = {"LLAVEA":'{',"LLAVEC":'}',"CORA":'\[',"CORC":'\]',"PARA":'\(',"PARAC":'\)',"MENOS":'\-',"MULT":'\*',"PUNTOYC":'\;',"DOSPUN":'\:',"COMA":'\,',"PUNTO":'\.',"SUMA":'\+',"Negacion":'!',"AND":'&',"Barra":'\|',"IGUAL":'=',"MOD":'%'}
@@ -44,6 +57,7 @@ class Analizador_Lexico:
                         listaTokens.append([linea,columna,clave,valor.replace('\\','')])
                         self.counter += 1
                         columna += 1
+                        self.sig = True
                         isSign = True
                         break
                 if not isSign:
@@ -52,9 +66,10 @@ class Analizador_Lexico:
                     self.counter += 1
             #END
         #END   
-        #for to in Errores:
-            #print(to)
         self.ReporteTabla(Errores,path)
+        self.Arbolid()
+        self.Arboldigitos()
+        self.ArbolSig()
         return listaTokens  
     #END
 
@@ -66,9 +81,11 @@ class Analizador_Lexico:
             if re.search(r"[a-zA-Z_0-9ñÑ]", text[self.counter]):
                 return self.StateIdentifier(line, column, text, word + text[self.counter])
             else:
+                self.identificador = True
                 return [line, column, 'identificador', word]
             #END
         else:
+            self.identificador = True
             return [line, column, 'identificador', word]
         #END
     #END
@@ -83,9 +100,11 @@ class Analizador_Lexico:
             elif re.search(r"\.", text[self.counter]):
                 return self.StateDecimal(line,column,text,word+text[self.counter])
             else:
+                self.numero = True
                 return[line,column,'Entero',word]
             #END
         else:
+            self.numero = True
             return[line,column,'Entero',word]
         #END
     #END
@@ -259,4 +278,57 @@ class Analizador_Lexico:
             file.close()
         #END
     #END 
+
+    def Arbolid(self):
+        if self.identificador == True:
+            ca = consArbol(self.expresionId)
+            raiz = ca.getRaiz()
+
+            raiz.getNodo()
+            raiz.siguientes()
+            print("==============================TABLA SEGUIENTES==============================")
+            sigTabla.impTabla()
+            tran = tranTabla(raiz)
+            print("=============================TABLA TRANSICIONES=============================")
+            tran.impTabla()
+            tran.grafo("Identificador")
+            sigTabla.tabla.clear()
+        #END
+    #END
+
+    def Arboldigitos(self):
+        if self.numero == True:
+            cd = consArbol(self.expresionDigito)
+            r = cd.getRaiz()
+
+            r.getNodo()
+            r.siguientes()
+            print("==============================TABLA SEGUIENTES==============================")
+            
+            sigTabla.impTabla()
+            trans = tranTabla(r)
+            print("=============================TABLA TRANSICIONES=============================")
+            trans.impTabla()
+            trans.grafo("Digito")
+            sigTabla.tabla.clear()
+        #END
+    #END
+
+    def ArbolSig(self):
+        if self.sig == True:
+            cs = consArbol(self.expresionSimbolo)
+            ra = cs.getRaiz()
+
+            ra.getNodo()
+            ra.siguientes()
+            print("==============================TABLA SEGUIENTES==============================")
+            
+            sigTabla.impTabla()
+            transi = tranTabla(ra)
+            print("=============================TABLA TRANSICIONES=============================")
+            transi.impTabla()
+            transi.grafo("Simbolos")
+            sigTabla.tabla.clear()
+        #END
+    #END   
 #END
