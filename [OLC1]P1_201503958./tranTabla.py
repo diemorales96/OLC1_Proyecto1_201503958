@@ -12,7 +12,6 @@ class tranTabla:
         self.estados = []
         self.cont = 0
 
-        # [ nombre, elementos, transiciones, Aceptacion]
         self.estados.append( ["S"+str(self.cont), raiz.primeros, [], False] )
         self.cont += 1
 
@@ -67,13 +66,11 @@ class tranTabla:
         dot = Digraph(comment='Grafica de Estados')
         dot.attr('node', shape='circle')
 
-        # Creamos los nodos
         for e in self.estados:
             dot.node(e[0],e[0])
             if e[3]:
                 dot.node(e[0], shape='doublecircle')
 
-        #Creamos las transiciones
         for e in self.estados:
             for t in e[2]:
                 dot.edge(t.eIni, t.eFin, label=t.tran)

@@ -38,17 +38,14 @@ class nodo:
         elif self.tipo == tipo.AND:
 
             if ( isinstance(izq, nodo) and isinstance(der, nodo) ):
-                # Anulable
                 self.anulable = izq.anulable and der.anulable
 
-                # Primeros
                 if izq.anulable:
                     self.primeros.extend(izq.primeros)
                     self.primeros.extend(der.primeros)
                 else:
                     self.primeros.extend(izq.primeros)
 
-                # Ultimos
                 if der.anulable:
                     self.ultimos.extend(izq.ultimos)
                     self.ultimos.extend(der.ultimos)
@@ -58,14 +55,11 @@ class nodo:
         elif self.tipo == tipo.OR:
 
             if ( isinstance(izq, nodo) and isinstance(der, nodo) ):
-                # Anulable
                 self.anulable = izq.anulable or der.anulable
 
-                # Primeros
                 self.primeros.extend(izq.primeros)
                 self.primeros.extend(der.primeros)
 
-                # Ultimos
                 self.ultimos.extend(izq.ultimos)
                 self.ultimos.extend(der.ultimos)
 

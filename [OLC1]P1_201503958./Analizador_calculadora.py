@@ -25,7 +25,7 @@ class Analizador_calculadora:
                 self.listaTokens.append([self.fila,self.columna,'ULTIMO',''])
                 an = AnalisisSintactico()
                 er = an.parsear(self.listaTokens)
-                print(er)
+                #print(er)
                 cad = ""
                 for token in self.listaTokens:
                     cad = cad + token[3]
@@ -40,7 +40,7 @@ class Analizador_calculadora:
                 #END
                 lista.append([self.fila,cad,correcto])
                 for l in lista:
-                    print(l)
+                    #print(l)
                     cadena = cadena + "<tr>\n\t\t<td>"+ str(cont) +"</td>\n"
                     cadena = cadena + "\t\t<td>"+ str(l[1])+"</td>\n"
                     cadena = cadena + "\t\t<td>"+ l[2]+"</td>\n\t</tr>\n"

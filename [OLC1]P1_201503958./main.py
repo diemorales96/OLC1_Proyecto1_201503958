@@ -3,6 +3,8 @@ from tkinter import ttk
 from tkinter import messagebox
 from tkinter.filedialog import askopenfilename
 from tkinter.messagebox import showerror
+from tkinter import Tk, Menu, messagebox, filedialog, ttk, Label, scrolledtext, INSERT, END, Button, Scrollbar, RIGHT, Y, Frame, Canvas, HORIZONTAL, VERTICAL, simpledialog, Text
+
 
 from Analizador_Lexico import Analizador_Lexico
 from Analizador_html import Analizador_html
@@ -19,7 +21,7 @@ def analizar():
     try:
         ext = extencion[1]
     except:
-        ext = "rmt"
+        ext = "other"
     #END
 
     _valor = entrada.get(1.0,END)
@@ -59,6 +61,8 @@ def analizar():
         for token in tokens:
             resultado = resultado + token[3]
         #END
+        salida.delete(1.0,END)
+        salida.insert(INSERT,resultado)
         creararchivo(dir,resultado,ext)
         print("archivo creado")
     elif ext == "html":
@@ -69,6 +73,8 @@ def analizar():
         for token in tokens:
             resultado = resultado + token[3]
         #END
+        salida.delete(1.0,END)
+        salida.insert(INSERT,resultado)
         creararchivo(dir,resultado,ext)
         print("archivo creado")
     elif ext == "css":
@@ -79,6 +85,8 @@ def analizar():
         for token in tokens:
             resultado = resultado + token[3]
         #END
+        salida.delete(1.0,END)
+        salida.insert(INSERT,resultado)
         creararchivo(dir,resultado,ext)
         print("archivo creado")
     elif ext == "rmt":
@@ -103,6 +111,8 @@ def creararchivo(path,resultado,ext):
     #END 
 #END
 
+
+
 def load_file():
     
            fname = askopenfilename(filetypes=(("HTML", "*.html"),
@@ -111,6 +121,7 @@ def load_file():
                                               ("Js","*.js") ))
            if fname:
                try:
+                   entrada.delete(1.0,END)
                    global extencion
                    archivo = open(fname)
                    texto = archivo.read()
@@ -124,26 +135,30 @@ def load_file():
 #END
 
 def new():
+    global extencion 
     entrada.delete(1.0,END)
+    extencion.clear()
 #END
 
 def save():
-           fname = askopenfilename(filetypes=(("HTML", "*.html"),
-                                              ("CSS", "*.css"),
-                                              ("RMT", "*.rmt"),
-                                              ("Js","*.js") ))
-           if fname:
-               try:
-                   global extencion
-                   archivo = open(fname)
-                   texto = archivo.read()
-                   extencion = fname.split(".")
-                   print(extencion[1])
-                   entrada.insert(INSERT,texto)
-                   archivo.close()
-               except:                    
-                   showerror("Open Source File", "Failed to read file\n'%s'" % fname)
-               return#END
+    global extencion
+    fguardar = open(extencion[0]+extencion[1],"w+")
+    fguardar.write(entrada.get(1.0,END))
+    fguardar.close()
+    print("Archivo Guardado")    
+#END
+
+def saveAs():
+    global extencion
+    guardar = filedialog.asksaveasfilename(title = "Guardar Archivo")
+    fguardar = open(guardar, "w+")
+    fguardar.write(entrada.get(1.0, END))
+    fguardar.close()
+    extencion.clear()
+    extencion = guardar.split(".")
+    print("Archivo Guardado")     
+#END
+
 def close_window (): 
     app.destroy()
 #END
@@ -154,14 +169,14 @@ app.title("Proyecto 1")
 Vp = Frame(app)
 menubar = Menu(app)
 
-Vp.grid(column = 0, row = 0,padx =(50,50), pady=(10,10))
+Vp.grid(column = 0, row = 0,padx =(70,70), pady=(10,10))
 
 filemenu = Menu(menubar)
 filemenu = Menu(menubar)
 filemenu.add_command(label="Nuevo",command = new)
 filemenu.add_command(label="Abrir",command = load_file)
 filemenu.add_command(label="Guardar", command = save)
-filemenu.add_command(label="Guardar Como",command = analizar)
+filemenu.add_command(label="Guardar Como",command = saveAs)
 filemenu.add_command(label="Ejecutar Analizar",command = analizar)
 filemenu.add_command(label="Salir",command = close_window)
 
@@ -169,6 +184,8 @@ menubar.add_cascade(label="File", menu=filemenu)
 
 app.config(menu=menubar)
 
-entrada = Text(Vp,height=30,width = 100)
+entrada = Text(Vp,height=30,width = 70)
 entrada.grid(column=2,row = 1)
+salida = Text(Vp,height=30,width = 70)
+salida.grid(column = 3, row = 1)
 app.mainloop()

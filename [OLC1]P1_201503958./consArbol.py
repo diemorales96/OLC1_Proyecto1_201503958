@@ -8,9 +8,6 @@ class consArbol:
 
     def __init__(self, er):
 
-        # Recordar que la er ya viene aumentada
-        # y esta es un conjunto de caracteres
-
         nh = numHoja(er)
         pila = []
         hojas.lista.clear()
@@ -39,6 +36,7 @@ class consArbol:
                 if (isinstance(unario,nodo)):
                     n = nodo(x, tipo.KLEENE, 0, unario, None)
                     pila.append(n)
+
             elif x == "?":
                 unario = pila.pop(len(pila)-1)
                 if(isinstance(unario,nodo)):
@@ -47,7 +45,7 @@ class consArbol:
             else:
                 n = nodo(x, tipo.HOJA, nh.getNum(), None, None)
                 pila.append(n)
-                hojas.addHoja(n) # Importante agregar la hoja
+                hojas.addHoja(n)
 
 
         self.raiz = pila.pop(len(pila) - 1)

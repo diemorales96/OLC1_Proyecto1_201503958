@@ -18,15 +18,20 @@ class Analizador_css:
         #Errores = []
         linea = 1
         columna = 1
+        print("==========Bitacora:===========")
         while self.counter < len(texto):
             if re.search(r"[A-Za-z]", texto[self.counter]):
+                print("S0 -> S1: con " + texto[self.counter])
                 self.listaToknes.append(self.StateIdentifier(linea,columna,texto,texto[self.counter]))
             elif re.search(r"[0-9]", texto[self.counter]):
+                print("S0 -> S2: con " + texto[self.counter])
                 self.listaToknes.append(self.StateNumber(linea,columna,texto,texto[self.counter]))
             elif re.search(r"\/", texto[self.counter]):
+                print("S0 -> S3: con " + texto[self.counter])
                 count = self.counter
                 self.StateComment(linea,columna,texto,texto[self.counter],count)
             elif re.search(r"\"", texto[self.counter]):
+                print("S0 -> S4: con " + texto[self.counter])
                 count = self.counter
                 self.listaToknes.append(self.StateChain(linea,columna,texto,texto[self.counter],count))
             elif re.search(r"\n",texto[self.counter]):
@@ -43,6 +48,7 @@ class Analizador_css:
                 for clave in self.signos:
                     valor = self.signos[clave]
                     if re.search(valor,texto[self.counter]):
+                        print("S0 -> S5: con " + texto[self.counter])
                         self.listaToknes.append([linea,columna,clave,valor.replace('\\','')])
                         self.counter += 1
                         columna += 1
@@ -58,18 +64,21 @@ class Analizador_css:
         self.ReporteTabla(self.Errores,dir)
         return self.listaToknes
     #END
-
+    #S1
     def StateIdentifier(self,line,column,text,word):
         global columna,counter
         self.counter += 1
         columna += 1
         if self.counter < len(text):
             if re.search(r"[A-Za-z0-9\-]", text[self.counter]):
+                print("S1 -> S1: con " + text[self.counter])
                 return self.StateIdentifier(line,column,text,word+text[self.counter])
             else:
+                print("S1 -> S0: con "+text[self.counter])
                 return [line,column,'identificador',word]
             #END
         else:
+            print("S1 -> S0: con "+text[self.counter])
             return [line,column,'identificador',word]
         #END
     #END
@@ -87,44 +96,52 @@ class Analizador_css:
             #END
         #END
     #END
-    
+    #S2
     def StateNumber(self,line,column,text,word):
         global columna,counter
         self.counter += 1
         columna += 1
         if self.counter < len(text):
             if re.search(r"[0-9]", text[self.counter]):
+                print("S2 -> S2: con "+text[self.counter])
                 return self.StateNumber(line,column,text,word+text[self.counter])
             elif re.search(r"\.", text[self.counter]):
+                print("S2 -> S5: con "+text[self.counter])
                 return self.StateDecimal(line,column,text,word+text[self.counter])
             else:
+                print("S2 -> S0: con "+text[self.counter])
                 return [line,column,'ENTERO',word]
             #END
         else:
+            print("S2 -> S0: con "+text[self.counter])
             return[line,column,'ENTERO',word]
     #END
-
+    #S5
     def StateDecimal(self,line,column,text,word):
         global columna,counter
         self.counter += 1
         columna += 1
         if self.counter < len(text):
             if re.search(r"[0-9]", text[self.counter]):
+                print("S5 -> S5: con "+text[self.counter])
                 return self.StateDecimal(line,column,text,word+text[self.counter])
             else:
+                print("S5 -> S0: con "+text[self.counter])
                 return [line,column,'DECIMAL',word]
             #END
         else:
+            print("S5 -> S0: con "+text[self.counter])
             return [line,column,'DECIMAL',word]
         #END
     #END
-
+    #S3
     def StateComment(self,line,column,text,word,count):
         global counter, columna,Errores
         self.counter += 1
         columna += 1
         if self.counter < len(text):
             if re.search(r"\*", text[self.counter]):
+                print("S3 -> S6: con "+text[self.counter])
                 return self.StateTComment(line,column,text,word+text[self.counter],count)
             else:
                 self.Errores.append([line,column,word])
@@ -137,15 +154,17 @@ class Analizador_css:
             columna += 1
         #END
     #END
-
+    #S6
     def StateTComment(self,line,column,text,word,count):
         global counter, columna
         self.counter += 1
         columna += 1
         if self.counter < len(text):
             if re.search(r"\*",text[self.counter]):
+                print("S6 -> S7: con "+text[self.counter])
                 return self.StateFComment(line,column,text,word+text[self.counter],count)
             else:
+                print("S6 -> S6: con "+text[self.counter])
                 return self.StateTComment(line,column,text,word+text[self.counter],count)
             #END
         else:
@@ -154,7 +173,7 @@ class Analizador_css:
             self.Errores.append([line,column,word[0]])
         #END
     #END
-
+    #S7
     def StateFComment(self,line,column,text,word,count):
         global counter,columna
         self.counter += 1
@@ -163,10 +182,13 @@ class Analizador_css:
             if re.search(r"\/", text[self.counter]):
                 self.counter += 1
                 columna += 1
+                print("S7 -> S0: con "+text[self.counter])
                 self.listaToknes.append([line,column,'COMENTARIO',word+text[self.counter-1]])
             elif re.search(r"\*", text[self.counter]):
+                print("S7 -> S7: con "+text[self.counter])
                 return self.StateFComment(line,column,text,word+text[self.counter],count)
             else:
+                print("S7 -> S6: con "+text[self.counter])
                 return self.StateTComment(line,column,text,word+text[self.counter],count)
             #END
         else:
@@ -175,7 +197,7 @@ class Analizador_css:
             self.Errores.append([line,column,word[0]])
         #END
     #END    
-
+    #S4
     def StateChain(self,line,column,text,word,count):
         global columna, counter
         columna += 1
@@ -183,17 +205,21 @@ class Analizador_css:
         if self.counter < len(text):
             if re.search(r"\"", text[self.counter]):
                 self.counter += 1
+                print("S4 -> S0: con "+text[self.counter])
                 return [line,column,'CADENA',word+text[self.counter-1]]
             elif re.search(r"\n", text[self.counter]):
                 self.counter = count + 1
                 columna = column + 1
+                print("S4 -> S0: con "+text[self.counter])
                 return [line,column,'CADENA', word[0]]
             else:
+                print("S4 -> S4: con "+text[self.counter])
                 return self.StateChain(line,column,text,word+text[self.counter],count)
             #END
         else:
             self.counter = count + 1
             columna = column + 1
+            print("S4 -> S0: con "+text[self.counter])
             return [line,column,'CADENA',word[0]]
         #END
     #END   

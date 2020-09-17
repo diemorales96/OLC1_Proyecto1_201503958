@@ -9,11 +9,14 @@ class AnalisisSintactico:
         self.listaTokens = l
         self.preanalisis = self.listaTokens[0]
         self.Errores = False
-        while True:
-            if self.preanalisis[2] != "ULTIMO":
-                self.E()
-            else :
-                break
+        #while True:
+            #if self.preanalisis[2] != "ULTIMO":
+                #self.E()
+            #else :
+                #break
+        self.E()
+        if self.preanalisis[2] != "ULTIMO":
+            self.Errores = True
         return self.Errores
         #END
     #END
